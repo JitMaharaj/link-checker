@@ -60,7 +60,7 @@ class MegaChecker
     /**
      * @param string $link              MEGA link
      * @param bool $verifyCertificate   if false it will not verify the SSL certificate
-     * @return bool                     true if the link is valid, false otherwise
+     * @return bool                     true if the link is valid and online, false otherwise
      * @throws InvalidArgumentException if the MEGA link is not valid
      * @throws Exception                if it was not possible to communicate with the MEGA API
      */
