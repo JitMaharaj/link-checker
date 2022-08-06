@@ -1,5 +1,7 @@
 # MEGA link checker
 
+![tests](https://github.com/tassoneroberto/mega-link-checker/actions/workflows/php.yml/badge.svg)
+
 A PHP class to check if [MEGA](https://mega.io/) links are valid, online or offline.
 
 ## Usage
