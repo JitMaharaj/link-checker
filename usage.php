@@ -1,6 +1,8 @@
 <?php
 
-require_once('MegaChecker.php');
+require "./vendor/autoload.php";
+
+use MegaChecker\MegaChecker;
 
 $link = 'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz';
 

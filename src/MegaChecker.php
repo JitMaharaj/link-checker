@@ -1,15 +1,18 @@
 <?php
 
+namespace MegaChecker;
+
 class MegaChecker
 {
     const API_URL = 'https://g.api.mega.co.nz';
 
-    //TODO: add support to old version links:
-    // file => https://mega.nz/#!yyyyyy!bbbbbbbbbbbbbbbbbbb
-    // folder => https://mega.nz/#F!xxxxxxx!zzzzzzzzzzzzzzzzzzzzz
-    const REGEX_VALID = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{0,8}#?[a-zA-Z0-9_-]*/';
-    const REGEX_CONTAINS_KEY = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{0,8}#[a-zA-Z0-9_-]+/';
-    const REGEX_DOES_CONTAIN_KEY = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{0,8}#?/';
+    const REGEX_OLD_VALID = '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]*)?/';
+    const REGEX_OLD_CONTAINS_KEY = '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]+)/';
+    const REGEX_OLD_DOES_CONTAIN_KEY = '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}!?/';
+
+    const REGEX_NEW_VALID = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]*)?/';
+    const REGEX_NEW_CONTAINS_KEY = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]+)/';
+    const REGEX_NEW_DOES_CONTAIN_KEY = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}#?/';
 
     const TYPE_FILE = 'file';
     const TYPE_FOLDER = 'folder';
@@ -21,7 +24,7 @@ class MegaChecker
     const STATUS_UNKNOWN = 'unknown';
 
     /**
-     * @param string[] $links           array of MEGA links
+     * @param string[] $links           array of MEGA links. Old links format not supported
      * @param bool $continueOnError     if true the script will not be interrupted if a link in invalid
      * @param bool $verifyCertificate   if false it will not verify the SSL certificate
      * @return string[]                 array with the structure ['mega_link' => 'online/offline/invalid']
@@ -45,7 +48,7 @@ class MegaChecker
                     $verifyCertificate,
                     $verbose
                 ) ? self::STATUS_ONLINE : self::STATUS_OFFLINE;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 if ($continueOnError) {
                     $result[$link] = self::STATUS_UNKNOWN;
                     continue;
@@ -70,22 +73,10 @@ class MegaChecker
         bool $verbose = false,
     ): bool {
         if (!self::isValid($link)) {
-            throw new InvalidArgumentException("The link $link is not valid");
+            throw new \InvalidArgumentException("The link $link is not valid");
         }
 
-        // get the file_handler/file_id
-        $splittedLink = explode('/', $link);
-        if (self::containsKey($link)) {
-            // [$id, $key] = explode('#', $splittedLink[4]);
-            $id = explode('#', $splittedLink[4])[0];
-        } else {
-            if (str_contains($link, '#')) {
-                $id = explode('#', $splittedLink[4])[0];
-            } else {
-                $id = $splittedLink[4];
-            }
-        }
-
+        $id = self::getIdAndKey($link)[0];
         $type = self::getType($link);
         switch ($type) {
             case self::TYPE_FOLDER:
@@ -103,7 +94,7 @@ class MegaChecker
                 ];
                 break;
             default:
-                throw new InvalidArgumentException("Invalid link type $type");
+                throw new \InvalidArgumentException("Invalid type $type");
         }
 
         $url = self::API_URL . '/cs?id=' .
@@ -112,7 +103,7 @@ class MegaChecker
 
         $result = self::postCall($url, $payload, $verifyCertificate, $verbose);
         if (!$result) {
-            throw new Exception('Connection failed');
+            throw new \Exception('Connection failed');
         }
         if (is_numeric($result) && intval($result) <= 0) {
             return false;
@@ -122,37 +113,111 @@ class MegaChecker
 
     /**
      * @param string $link              MEGA link
+     * @return string[]                 id and decryption key
+     * @throws InvalidArgumentException if the MEGA link is not valid
+     */
+    public static function getIdAndKey(string $link): array
+    {
+        if (!self::isValid($link)) {
+            throw new \InvalidArgumentException("The link $link is not valid");
+        }
+        if (!self::isNewFormat($link)) {
+            $link = self::convertFromOldFormat($link);
+        }
+
+        $last = explode('/', $link)[4];
+        if (str_contains($last, '#')) {
+            [$id, $key] = explode('#', $last);
+            if ($key === '') {
+                $key = null;
+            }
+            return [$id, $key];
+        } else {
+            return [$last, null];
+        }
+    }
+
+    /**
+     * @param string $link              MEGA link in the new format
      * @return string                   link type `file` or `folder`
      * @throws InvalidArgumentException if the MEGA link is not valid
      */
     public static function getType(string $link): string
     {
         if (!self::isValid($link)) {
-            throw new InvalidArgumentException("The link $link is not valid");
+            throw new \InvalidArgumentException("The link $link is not valid");
+        }
+        if (!self::isNewFormat($link)) {
+            $link = self::convertFromOldFormat($link);
         }
         return explode('/', $link)[3];
     }
 
     /**
-     * @param string $link              MEGA link
+     * @param string $link              MEGA link, old or new format
      * @return bool                     true if the decryption key is included in the link
      * @throws InvalidArgumentException if the MEGA link is not valid
      */
     public static function containsKey(string $link): bool
     {
         if (!self::isValid($link)) {
-            throw new InvalidArgumentException("The link $link is not valid");
+            throw new \InvalidArgumentException("The link $link is not valid");
         }
-        return preg_replace(self::REGEX_CONTAINS_KEY, '', $link) === '';
+        return preg_replace(self::REGEX_NEW_CONTAINS_KEY, '', $link) === '' ||
+            preg_replace(self::REGEX_OLD_CONTAINS_KEY, '', $link) === '';
     }
 
     /**
-     * @param string $link  MEGA link
+     * @param string $link  MEGA link, old or new format
      * @return bool         true if the link is valid against a REGEX pattern
      */
     public static function isValid(string $link): bool
     {
-        return preg_replace(self::REGEX_VALID, '', $link) === '';
+        return preg_replace(self::REGEX_NEW_VALID, '', $link) === '' ||
+            preg_replace(self::REGEX_OLD_VALID, '', $link) === '';
+    }
+
+    /**
+     * @param string $link              MEGA link, old or new format
+     * @return bool                     true if the link's format is new
+     * @throws InvalidArgumentException if the MEGA link is not valid
+     */
+    public static function isNewFormat(string $link): bool
+    {
+        if (!self::isValid($link)) {
+            throw new \InvalidArgumentException("The link $link is not valid");
+        }
+        return preg_replace(self::REGEX_NEW_VALID, '', $link) === '';
+    }
+
+    /**
+     * @param string $link              MEGA link in the old format
+     * @return string                   link converted to the new format
+     * @throws InvalidArgumentException if the MEGA link is not valid
+     */
+    public static function convertFromOldFormat(string $link): string
+    {
+        if (!self::isValid($link)) {
+            throw new \InvalidArgumentException("The link $link is not valid");
+        }
+        if (self::isNewFormat($link)) {
+            return trim($link);
+        }
+
+        $link = trim($link);
+
+        $splittedLink = explode('!', $link);
+        $id = $splittedLink[1];
+        if (count($splittedLink) === 3) {
+            $key = $splittedLink[2];
+        }
+        $newFormatLink = 'https://mega.nz/' .
+            (str_contains($link, '/#F!') ? self::TYPE_FOLDER : self::TYPE_FILE) . '/' . $id;
+        if (!empty($key)) {
+            $newFormatLink .= '#' . $key;
+        }
+
+        return $newFormatLink;
     }
 
     /**

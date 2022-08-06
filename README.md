@@ -5,10 +5,6 @@ A PHP class to check if [MEGA](https://mega.io/) links are valid, online or offl
 ## Usage
 
 ```php
-<?php
-
-require_once('MegaChecker.php');
-
 $link = 'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz';
 
 var_dump(MegaChecker::isValid($link));
@@ -31,7 +27,6 @@ print_r($result);
 output:
 
 ```console
-> php .\usage.php
 bool(true)
 bool(false)
 Array
