@@ -7,12 +7,12 @@ class MegaChecker
     const API_URL = 'https://g.api.mega.co.nz';
 
     const REGEX_OLD_VALID = '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]*)?/';
-    const REGEX_OLD_CONTAINS_KEY = '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]+)/';
-    const REGEX_OLD_DOES_CONTAIN_KEY = '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}!?/';
+    const REGEX_OLD_WITH_KEY = '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]+)/';
+    const REGEX_OLD_NO_KEY = '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}!?/';
 
     const REGEX_NEW_VALID = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]*)?/';
-    const REGEX_NEW_CONTAINS_KEY = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]+)/';
-    const REGEX_NEW_DOES_CONTAIN_KEY = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}#?/';
+    const REGEX_NEW_WITH_KEY = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]+)/';
+    const REGEX_NEW_NO_KEY = '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}#?/';
 
     const TYPE_FILE = 'file';
     const TYPE_FOLDER = 'folder';
@@ -163,8 +163,8 @@ class MegaChecker
         if (!self::isValid($link)) {
             throw new \InvalidArgumentException("The link $link is not valid");
         }
-        return preg_replace(self::REGEX_NEW_CONTAINS_KEY, '', $link) === '' ||
-            preg_replace(self::REGEX_OLD_CONTAINS_KEY, '', $link) === '';
+        return preg_replace(self::REGEX_NEW_WITH_KEY, '', $link) === '' ||
+            preg_replace(self::REGEX_OLD_WITH_KEY, '', $link) === '';
     }
 
     /**
