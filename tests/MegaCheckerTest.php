@@ -171,4 +171,21 @@ final class MegaCheckerTest extends TestCase
             ['https://mega.nz/#F!xxxxxxxx', 'xxxxxxxx', null],
         ];
     }
+
+    public function testCheckLinks(): void
+    {
+        $linksToCheck = [
+            'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz' => MegaChecker::STATUS_OFFLINE,
+            'https://mega.nz/fil/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz' => MegaChecker::STATUS_INVALID,
+            'https://mega.nz/file/xxxxxxxx#' => MegaChecker::STATUS_OFFLINE,
+            'https://mega.nzfile/xxxxxxxx#' => MegaChecker::STATUS_INVALID,
+            'https://mega.nz/#!xxxxxxxx!zzzzzzzzzzzzzzzzzzzzz' => MegaChecker::STATUS_OFFLINE,
+            'https://mega.nz/#!xxxxxxxxzzzzzzzzzzzzzzzzzzzzz' => MegaChecker::STATUS_INVALID,
+        ];
+
+        $result = MegaChecker::checkLinks(array_keys($linksToCheck), false, false);
+        foreach ($result as $link => $status) {
+            $this->assertSame($linksToCheck[$link], $status);
+        }
+    }
 }
