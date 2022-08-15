@@ -4,6 +4,22 @@
 
 A PHP class to check if [MEGA](https://mega.io/) links are valid, online or offline.
 
+## Requirements
+
+It requires `php-curl`.
+
+For Ubuntu/Debian users:
+
+```bash
+sudo apt-get install php-curl
+```
+
+For Windows users uncomment the following line in `php.ini`:
+
+```ini
+extension=php_curl.dll
+```
+
 ## Usage
 
 ```php
