@@ -2,12 +2,13 @@
 
 require "./vendor/autoload.php";
 
-use MegaChecker\MegaChecker;
+use LinkChecker\LinkChecker;
+use LinkChecker\Mega;
 
 $link = 'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz';
 
-var_dump(MegaChecker::isValid($link));
-var_dump(MegaChecker::isOnline($link));
+var_dump(Mega::isValid($link));
+var_dump(Mega::isOnline($link));
 
 $links = [
     'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', // file with key
@@ -18,6 +19,6 @@ $links = [
     'https://mega.nz/folder/xxxxxxxx', // folder without key
 ];
 
-$result = MegaChecker::checkLinks($links);
+$result = LinkChecker::checkLinks($links);
 
 print_r($result);

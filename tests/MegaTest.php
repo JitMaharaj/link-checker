@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-use MegaChecker\MegaChecker;
+use LinkChecker\Constants;
+use LinkChecker\Mega;
 use PHPUnit\Framework\TestCase;
 
-final class MegaCheckerTest extends TestCase
+final class MegaTest extends TestCase
 {
     /**
      * @dataProvider linksValidFormat
      */
     public function testValidFormat(string $link, bool $isValid, bool $isNewFormat): void
     {
-        $this->assertSame($isValid, MegaChecker::isValid($link));
+        $this->assertSame($isValid, Mega::isValid($link));
 
-        if (MegaChecker::isValid($link)) {
-            $this->assertSame($isNewFormat, MegaChecker::isNewFormat($link));
+        if (Mega::isValid($link)) {
+            $this->assertSame($isNewFormat, Mega::isNewFormat($link));
         }
     }
 
@@ -68,7 +69,7 @@ final class MegaCheckerTest extends TestCase
      */
     public function testGetType(string $link, string $type): void
     {
-        $this->assertSame($type, MegaChecker::getType($link), $link);
+        $this->assertSame($type, Mega::getType($link), $link);
     }
 
     /**
@@ -78,19 +79,19 @@ final class MegaCheckerTest extends TestCase
     {
         return [
             // new format
-            ['https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', MegaChecker::TYPE_FILE],
-            ['https://mega.nz/file/xxxxxxxx#', MegaChecker::TYPE_FILE],
-            ['https://mega.nz/folder/xxxxxxxx', MegaChecker::TYPE_FOLDER],
-            ['https://mega.nz/folder/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', MegaChecker::TYPE_FOLDER],
-            ['https://mega.nz/folder/xxxxxxxx#', MegaChecker::TYPE_FOLDER],
-            ['https://mega.nz/folder/xxxxxxxx', MegaChecker::TYPE_FOLDER],
+            ['https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', Constants::TYPE_FILE],
+            ['https://mega.nz/file/xxxxxxxx#', Constants::TYPE_FILE],
+            ['https://mega.nz/folder/xxxxxxxx', Constants::TYPE_FOLDER],
+            ['https://mega.nz/folder/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', Constants::TYPE_FOLDER],
+            ['https://mega.nz/folder/xxxxxxxx#', Constants::TYPE_FOLDER],
+            ['https://mega.nz/folder/xxxxxxxx', Constants::TYPE_FOLDER],
             // old format
-            ['https://mega.nz/#!xxxxxxxx!zzzzzzzzzzzzzzzzzzzzz', MegaChecker::TYPE_FILE],
-            ['https://mega.nz/#!xxxxxxxx!', MegaChecker::TYPE_FILE],
-            ['https://mega.nz/#!xxxxxxxx', MegaChecker::TYPE_FILE],
-            ['https://mega.nz/#F!xxxxxxxx!zzzzzzzzzzzzzzzzzzzzz', MegaChecker::TYPE_FOLDER],
-            ['https://mega.nz/#F!xxxxxxxx!', MegaChecker::TYPE_FOLDER],
-            ['https://mega.nz/#F!xxxxxxxx', MegaChecker::TYPE_FOLDER],
+            ['https://mega.nz/#!xxxxxxxx!zzzzzzzzzzzzzzzzzzzzz', Constants::TYPE_FILE],
+            ['https://mega.nz/#!xxxxxxxx!', Constants::TYPE_FILE],
+            ['https://mega.nz/#!xxxxxxxx', Constants::TYPE_FILE],
+            ['https://mega.nz/#F!xxxxxxxx!zzzzzzzzzzzzzzzzzzzzz', Constants::TYPE_FOLDER],
+            ['https://mega.nz/#F!xxxxxxxx!', Constants::TYPE_FOLDER],
+            ['https://mega.nz/#F!xxxxxxxx', Constants::TYPE_FOLDER],
         ];
     }
 
@@ -99,7 +100,7 @@ final class MegaCheckerTest extends TestCase
      */
     public function testConversion(string $oldLink, string $expectedNewLink): void
     {
-        $this->assertSame($expectedNewLink, MegaChecker::convertFromOldFormat($oldLink));
+        $this->assertSame($expectedNewLink, Mega::convertFromOldFormat($oldLink));
     }
 
     /**
@@ -144,7 +145,7 @@ final class MegaCheckerTest extends TestCase
         string $expId,
         ?string $expKey
     ): void {
-        [$id, $key] = MegaChecker::getIdAndKey($link);
+        [$id, $key] = Mega::getIdAndKey($link);
         $this->assertSame($expId, $id);
         $this->assertSame($expKey, $key);
     }
@@ -170,22 +171,5 @@ final class MegaCheckerTest extends TestCase
             ['https://mega.nz/#F!xxxxxxxx!', 'xxxxxxxx', null],
             ['https://mega.nz/#F!xxxxxxxx', 'xxxxxxxx', null],
         ];
-    }
-
-    public function testCheckLinks(): void
-    {
-        $linksToCheck = [
-            'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz' => MegaChecker::STATUS_OFFLINE,
-            'https://mega.nz/fil/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz' => MegaChecker::STATUS_INVALID,
-            'https://mega.nz/file/xxxxxxxx#' => MegaChecker::STATUS_OFFLINE,
-            'https://mega.nzfile/xxxxxxxx#' => MegaChecker::STATUS_INVALID,
-            'https://mega.nz/#!xxxxxxxx!zzzzzzzzzzzzzzzzzzzzz' => MegaChecker::STATUS_OFFLINE,
-            'https://mega.nz/#!xxxxxxxxzzzzzzzzzzzzzzzzzzzzz' => MegaChecker::STATUS_INVALID,
-        ];
-
-        $result = MegaChecker::checkLinks(array_keys($linksToCheck), false, false);
-        foreach ($result as $link => $status) {
-            $this->assertSame($linksToCheck[$link], $status);
-        }
     }
 }

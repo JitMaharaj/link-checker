@@ -1,8 +1,13 @@
-# MEGA link checker
+# Link checker
 
-![tests](https://github.com/tassoneroberto/mega-link-checker/actions/workflows/php.yml/badge.svg)
+![tests](https://github.com/tassoneroberto/link-checker/actions/workflows/php.yml/badge.svg)
 
-A PHP class to check if [MEGA](https://mega.io/) links are valid, online or offline.
+A PHP module to check if hosted files/folders links are valid, online or offline.
+
+File hosters supported:
+
+- [x] [MEGA](https://mega.io/)
+- [ ] [Google Drive](https://www.google.com/drive/) (in progress...)
 
 ## Requirements
 
@@ -25,8 +30,8 @@ extension=php_curl.dll
 ```php
 $link = 'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz';
 
-var_dump(MegaChecker::isValid($link));
-var_dump(MegaChecker::isOnline($link));
+var_dump(Mega::isValid($link));
+var_dump(Mega::isOnline($link));
 
 $links = [
     'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', // file with key
@@ -37,7 +42,7 @@ $links = [
     'https://mega.nz/folder/xxxxxxxx', // folder without key
 ];
 
-$result = MegaChecker::checkLinks($links);
+$result = LinkChecker::checkLinks($links);
 
 print_r($result);
 ```

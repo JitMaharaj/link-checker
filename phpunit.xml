@@ -18,7 +18,7 @@
     </include>
   </coverage>
   <testsuites>
-    <testsuite name="MegaChecker test suite">
+    <testsuite name="LinkChecker test suite">
       <directory>tests</directory>
     </testsuite>
   </testsuites>
