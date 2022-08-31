@@ -8,7 +8,7 @@ class GoogleDrive implements CheckerInterface
     const API_URL_FOLDER = 'https://drive.google.com/drive/folders/';
 
     const REGEX = [
-        'valid' => '/https:\/\/drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-]{33}((\/(view|edit)?)?(\?[a-zA-Z0-1=]*)?)?/'
+        'valid' => '/https:\/\/drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]{33}((\/(view|edit)?)?(\?[a-zA-Z0-1=]*)?)?/'
     ];
 
     public static function isOnline(
