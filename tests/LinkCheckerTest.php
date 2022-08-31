@@ -18,11 +18,18 @@ final class LinkCheckerTest extends TestCase
             'https://mega.nzfile/xxxxxxxx#' => Constants::STATUS_INVALID,
             'https://mega.nz/#!xxxxxxxx!zzzzzzzzzzzzzzzzzzzzz' => Constants::STATUS_OFFLINE,
             'https://mega.nz/#!xxxxxxxxzzzzzzzzzzzzzzzzzzzzz' => Constants::STATUS_INVALID,
+            'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view' => Constants::STATUS_OFFLINE,
+            'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/error' => Constants::STATUS_INVALID,
+            'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxtoolong' => Constants::STATUS_INVALID,
+            'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxtooshort' => Constants::STATUS_INVALID,
+            'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' => Constants::STATUS_OFFLINE,
+            'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxtoolong' => Constants::STATUS_INVALID,
+            'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxtooshort' => Constants::STATUS_INVALID,
         ];
 
         $result = LinkChecker::checkLinks(array_keys($linksToCheck), false);
         foreach ($result as $link => $status) {
-            $this->assertSame($linksToCheck[$link], $status);
+            $this->assertSame($linksToCheck[$link], $status, $link);
         }
     }
 }

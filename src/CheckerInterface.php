@@ -4,10 +4,6 @@ namespace LinkChecker;
 
 interface CheckerInterface
 {
-    const API_URL = '';
-
-    const REGEX = [];
-
     /**
      * @param string $link              link to check
      * @param bool $verifyCertificate   if false it will not verify the SSL certificate

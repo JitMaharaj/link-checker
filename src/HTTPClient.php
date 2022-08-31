@@ -30,12 +30,12 @@ class HTTPClient
      * @param mixed $payload            payload to send in the body request
      * @param bool $verifyCertificate   if false it will not verify the SSL certificate
      * @param bool $verbose             if true it will print cURL details
-     * @return array                    response in the format [data, headers]
+     * @return array                    response in the format [data, headers, statusCode]
      */
     public static function request(
         string $url,
-        mixed $payload,
         string $type = self::TYPE_GET,
+        mixed $payload = null,
         bool $verifyCertificate = true,
         bool $verbose = false,
     ): array {
@@ -46,7 +46,7 @@ class HTTPClient
 
         $ch = curl_init($url);
 
-        $request_headers = [
+        $requestHeaders = [
             "Content-Type: application/json",
             "Accept: */*",
             "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
@@ -59,7 +59,7 @@ class HTTPClient
                 $bodyContent = json_encode($payload);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $bodyContent);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $bodyContent);
-                $request_headers[] = "Content-Length: " . strlen($bodyContent);
+                $requestHeaders[] = "Content-Length: " . strlen($bodyContent);
             }
             if ($type === self::TYPE_POST) {
                 curl_setopt($ch, CURLOPT_POST, true);
@@ -68,7 +68,7 @@ class HTTPClient
             }
         }
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_VERBOSE, $verbose);
 
@@ -80,22 +80,23 @@ class HTTPClient
         curl_setopt(
             $ch,
             CURLOPT_HEADERFUNCTION,
-            function ($curl, $header) use (&$headers) {
+            function ($curl, $header) use (&$responseHeaders) {
                 $len = strlen($header);
                 $header = explode(':', $header, 2);
                 if (count($header) < 2)
                     return $len;
 
-                $headers[strtolower(trim($header[0]))][] = trim($header[1]);
+                $responseHeaders[strtolower(trim($header[0]))][] = trim($header[1]);
 
                 return $len;
             }
         );
 
-        $response_headers = [];
+        $responseHeaders = [];
         $response_data = curl_exec($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        return [$response_data, $response_headers];
+        return [$response_data, $responseHeaders, $statusCode];
     }
 }

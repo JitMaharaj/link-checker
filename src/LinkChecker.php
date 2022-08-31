@@ -21,7 +21,7 @@ class LinkChecker
             $link = trim($link);
             $status = Constants::STATUS_INVALID;
             /** @var CheckerInterface $host */
-            foreach ([Mega::class] as $host) {
+            foreach ([Mega::class, GoogleDrive::class] as $host) {
                 try {
                     if ($host::isValid($link)) {
                         $status = $host::isOnline(

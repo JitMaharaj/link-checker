@@ -55,8 +55,8 @@ class Mega implements CheckerInterface
 
         $result = HTTPClient::request(
             $url,
-            $payload,
             HTTPClient::TYPE_POST,
+            $payload,
             $verifyCertificate,
             $verbose
         )[0];
@@ -73,6 +73,17 @@ class Mega implements CheckerInterface
     {
         return preg_replace(self::REGEX['new']['valid'], '', $link) === '' ||
             preg_replace(self::REGEX['old']['valid'], '', $link) === '';
+    }
+
+    public static function getType(string $link): string
+    {
+        if (!self::isValid($link)) {
+            throw new \InvalidArgumentException("The link $link is not valid");
+        }
+        if (!self::isNewFormat($link)) {
+            $link = self::convertFromOldFormat($link);
+        }
+        return explode('/', $link)[3];
     }
 
     /**
@@ -99,22 +110,6 @@ class Mega implements CheckerInterface
         } else {
             return [$last, null];
         }
-    }
-
-    /**
-     * @param string $link              MEGA link in the new format
-     * @return string                   link type `file` or `folder`
-     * @throws InvalidArgumentException if the MEGA link is not valid
-     */
-    public static function getType(string $link): string
-    {
-        if (!self::isValid($link)) {
-            throw new \InvalidArgumentException("The link $link is not valid");
-        }
-        if (!self::isNewFormat($link)) {
-            $link = self::convertFromOldFormat($link);
-        }
-        return explode('/', $link)[3];
     }
 
     /**
