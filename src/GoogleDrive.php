@@ -49,6 +49,9 @@ class GoogleDrive implements CheckerInterface
                 if (!$result) {
                     throw new \Exception('Connection failed');
                 }
+                if ($result[2] !== 200) {
+                    return false;
+                }
                 return
                     // the file exists and the header contains the location
                     // of the file
