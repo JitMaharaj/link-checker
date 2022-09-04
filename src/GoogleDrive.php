@@ -8,7 +8,8 @@ class GoogleDrive implements CheckerInterface
     const API_URL_FOLDER = 'https://drive.google.com/drive/folders/';
 
     const REGEX = [
-        'valid' => '/https:\/\/drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]{33}((\/(view|edit)?)?(\?[a-zA-Z0-1=]*)?)?/'
+        'valid' => '/https:\/\/drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+((\/(view|edit)?)?(\?[a-zA-Z0-9=\-\_]*)?)?/',
+        'clean' => '/https:\/\/drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+/',
     ];
 
     public static function isOnline(
@@ -49,27 +50,33 @@ class GoogleDrive implements CheckerInterface
                 if (!$result) {
                     throw new \Exception('Connection failed');
                 }
-                if ($result[2] !== 200) {
-                    return false;
+
+                switch ($result[2]) {
+                    case 404:
+                        return false;
+                    case 303: // redirect to download => the file is online
+                        return true;
+                    default:
+                        return
+                            // the file exists and the header contains the location
+                            // of the file
+                            isset($result[1]['location']) ||
+                            // the file exists but Google Drive can't scan this file
+                            // for viruses
+                            (isset($result[1]['cross-origin-opener-policy']) &&
+                                str_contains(
+                                    $result[1]['cross-origin-opener-policy'][0],
+                                    'DriveUntrustedContentHttp'
+                                )
+                            ) ||
+                            (isset($result[1]['content-security-policy']) &&
+                                str_contains(
+                                    $result[1]['content-security-policy'][0],
+                                    'DriveUntrustedContentHttp'
+                                )
+                            );
                 }
-                return
-                    // the file exists and the header contains the location
-                    // of the file
-                    isset($result[1]['location']) ||
-                    // the file exists but Google Drive can't scan this file
-                    // for viruses
-                    (isset($result[1]['cross-origin-opener-policy']) &&
-                        str_contains(
-                            $result[1]['cross-origin-opener-policy'][0],
-                            'DriveUntrustedContentHttp'
-                        )
-                    ) ||
-                    (isset($result[1]['content-security-policy']) &&
-                        str_contains(
-                            $result[1]['content-security-policy'][0],
-                            'DriveUntrustedContentHttp'
-                        )
-                    );
+
             default:
                 throw new \InvalidArgumentException("Invalid type $type");
         }
@@ -101,10 +108,7 @@ class GoogleDrive implements CheckerInterface
             throw new \InvalidArgumentException("The link $link is not valid");
         }
 
-        if (self::getType($link) === Constants::TYPE_FILE) {
-            return substr($link, 32, 33);
-        } else {
-            return substr($link, 39, 33);
-        }
+        preg_match(self::REGEX['clean'], $link, $match);
+        return explode('/', $match[0])[5];
     }
 }

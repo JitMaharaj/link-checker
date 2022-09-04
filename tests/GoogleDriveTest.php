@@ -13,7 +13,7 @@ final class GoogleDriveTest extends TestCase
      */
     public function testValidFormat(string $link, bool $isValid): void
     {
-        $this->assertSame($isValid, GoogleDrive::isValid($link));
+        $this->assertSame($isValid, GoogleDrive::isValid($link), $link);
     }
 
     /**
@@ -23,6 +23,7 @@ final class GoogleDriveTest extends TestCase
     {
         return [
             // valid
+            ['https://drive.google.com/file/d/0B17t2HhTjZgFRTRTbVhvZVZ6V28/edit?resourcekey=0-KWDMMWoE6Ozd8t6ZSf_idg', true],
             ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view?AnythingHereIsValid', true],
             ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view?usp=sharing', true],
             ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/edit?usp=sharing', true],
@@ -39,22 +40,16 @@ final class GoogleDriveTest extends TestCase
             ['https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?', true],
             ['https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/', true],
             ['https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/?', true],
-
             // invalid
             ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/viewusp=sharing', false],
             ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/edits', false],
-            ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxview?', false],
-            ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxx/', false],
             ['https://drive.google.com/filed/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', false],
             ['https://drive.google.com/file/dxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', false],
             ['https://drive.google.com/fie/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', false],
             ['https://drive.google.com/file/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', false],
             ['https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxusp=sharing', false],
-            ['https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', false],
             ['https://drive.google.com/drive/folder/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?usp=sharing', false],
             ['https://drive.google.com/drivefolders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?usp=sharing', false],
-            ['https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxx?usp=sharing', false],
-            ['https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', false],
 
         ];
     }
@@ -73,7 +68,6 @@ final class GoogleDriveTest extends TestCase
     public function linksType(): array
     {
         return [
-            // new format
             ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view?usp=sharing', Constants::TYPE_FILE],
             ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view?', Constants::TYPE_FILE],
             ['https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/', Constants::TYPE_FILE],

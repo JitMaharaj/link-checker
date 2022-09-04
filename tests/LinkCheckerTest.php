@@ -20,11 +20,8 @@ final class LinkCheckerTest extends TestCase
             'https://mega.nz/#!xxxxxxxxzzzzzzzzzzzzzzzzzzzzz' => Constants::STATUS_INVALID,
             'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view' => Constants::STATUS_OFFLINE,
             'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/error' => Constants::STATUS_INVALID,
-            'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxtoolong' => Constants::STATUS_INVALID,
-            'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxtooshort' => Constants::STATUS_INVALID,
             'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' => Constants::STATUS_OFFLINE,
-            'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxtoolong' => Constants::STATUS_INVALID,
-            'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxtooshort' => Constants::STATUS_INVALID,
+            'https://drive.google.com/file/d/0B17t2HhTjZgFRTRTbVhvZVZ6V28/view?resourcekey=0-KWDMMWoE6Ozd8t6ZSf_idg' => Constants::STATUS_ONLINE,
         ];
 
         foreach ($linksToCheck as $link => $expectedStatus) {
@@ -43,11 +40,8 @@ final class LinkCheckerTest extends TestCase
             'https://mega.nz/#!xxxxxxxxzzzzzzzzzzzzzzzzzzzzz' => Constants::STATUS_INVALID,
             'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view' => Constants::STATUS_OFFLINE,
             'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/error' => Constants::STATUS_INVALID,
-            'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxtoolong' => Constants::STATUS_INVALID,
-            'https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxtooshort' => Constants::STATUS_INVALID,
             'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' => Constants::STATUS_OFFLINE,
-            'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxtoolong' => Constants::STATUS_INVALID,
-            'https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxtooshort' => Constants::STATUS_INVALID,
+            'https://drive.google.com/file/d/0B17t2HhTjZgFRTRTbVhvZVZ6V28/view?resourcekey=0-KWDMMWoE6Ozd8t6ZSf_idg' => Constants::STATUS_ONLINE,
         ];
 
         $result = LinkChecker::checkLinks(array_keys($linksToCheck), false);

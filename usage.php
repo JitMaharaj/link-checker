@@ -35,3 +35,5 @@ $links = [
 $result = LinkChecker::checkLinks($links);
 
 print_r($result);
+
+var_dump(LinkChecker::getLinkStatus('https://drive.google.com/file/d/0B17t2HhTjZgFRTRTbVhvZVZ6V28/edit?resourcekey=0-KWDMMWoE6Ozd8t6ZSf_idg'));
