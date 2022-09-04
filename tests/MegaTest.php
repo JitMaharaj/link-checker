@@ -37,7 +37,6 @@ final class MegaTest extends TestCase
             ['https://mega.nz/file/xxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', false, true],
             ['https://mega.nz/file/xxxx', false, true],
             ['https://mega.nz/files/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', false, true],
-            ['http://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', false, true],
             ['https:/mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', false, true],
             ['https://mega.nz/folder/xxxxxxxxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', false, true],
             ['https://mega.nz/folders/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', false, true],

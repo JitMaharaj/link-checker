@@ -7,7 +7,8 @@ A PHP module to check if hosted files/folders links are valid, online or offline
 Supported services:
 
 - [MEGA](https://mega.io/)
-- [Google Drive](https://www.google.com/drive/)
+- [Google Drive](https://google.com/drive/)
+- [MediaFire](https://mediafire.com/)
 
 ## Requirements
 

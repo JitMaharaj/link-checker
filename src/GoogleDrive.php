@@ -8,8 +8,8 @@ class GoogleDrive implements CheckerInterface
     const API_URL_FOLDER = 'https://drive.google.com/drive/folders/';
 
     const REGEX = [
-        'valid' => '/https:\/\/(www\.)?drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+((\/(view|edit)?)?(\?[a-zA-Z0-9=\-\_]*)?)?/',
-        'clean' => '/https:\/\/(www\.)?drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+/',
+        'valid' => '/http(s)?:\/\/(www\.)?drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+((\/(view|edit)?)?(\?[a-zA-Z0-9=\-\_]*)?)?/',
+        'clean' => '/http(s)?:\/\/(www\.)?drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+/',
     ];
 
     public static function isOnline(
@@ -98,7 +98,7 @@ class GoogleDrive implements CheckerInterface
     }
 
     /**
-     * @param string $link              Google Drive link
+     * @param string $link              link
      * @return string                   resource id
      * @throws InvalidArgumentException if the link is not valid
      */

@@ -8,14 +8,14 @@ class Mega implements CheckerInterface
 
     const REGEX = [
         'old' => [
-            'valid' => '/https:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]*)?/',
-            'with_key' => '/https:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]+)/',
-            'without_key' => '/https:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}!?/'
+            'valid' => '/http(s)?:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]*)?/',
+            'with_key' => '/http(s)?:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]+)/',
+            'without_key' => '/http(s)?:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}!?/'
         ],
         'new' => [
-            'valid' => '/https:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]*)?/',
-            'with_key' => '/https:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]+)/',
-            'without_key' => '/https:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}#?/'
+            'valid' => '/http(s)?:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]*)?/',
+            'with_key' => '/http(s)?:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]+)/',
+            'without_key' => '/http(s)?:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}#?/'
         ]
     ];
 
@@ -87,9 +87,9 @@ class Mega implements CheckerInterface
     }
 
     /**
-     * @param string $link              MEGA link
+     * @param string $link              link
      * @return string[]                 id and decryption key
-     * @throws InvalidArgumentException if the MEGA link is not valid
+     * @throws InvalidArgumentException if the link is not valid
      */
     public static function getIdAndKey(string $link): array
     {
@@ -113,9 +113,9 @@ class Mega implements CheckerInterface
     }
 
     /**
-     * @param string $link              MEGA link, old or new format
+     * @param string $link              link, old or new format
      * @return bool                     true if the decryption key is included in the link
-     * @throws InvalidArgumentException if the MEGA link is not valid
+     * @throws InvalidArgumentException if the link is not valid
      */
     public static function containsKey(string $link): bool
     {
@@ -127,9 +127,9 @@ class Mega implements CheckerInterface
     }
 
     /**
-     * @param string $link              MEGA link, old or new format
+     * @param string $link              link, old or new format
      * @return bool                     true if the link's format is new
-     * @throws InvalidArgumentException if the MEGA link is not valid
+     * @throws InvalidArgumentException if the link is not valid
      */
     public static function isNewFormat(string $link): bool
     {
@@ -140,9 +140,9 @@ class Mega implements CheckerInterface
     }
 
     /**
-     * @param string $link              MEGA link in the old format
+     * @param string $link              link in the old format
      * @return string                   link converted to the new format
-     * @throws InvalidArgumentException if the MEGA link is not valid
+     * @throws InvalidArgumentException if the link is not valid
      */
     public static function convertFromOldFormat(string $link): string
     {

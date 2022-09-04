@@ -7,6 +7,7 @@ class LinkChecker
     const HOSTING_PROVIDERS = [
         Mega::class,
         GoogleDrive::class,
+        MediaFire::class
     ];
 
     /**
