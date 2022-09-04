@@ -4,6 +4,11 @@ namespace LinkChecker;
 
 class LinkChecker
 {
+    const HOSTING_PROVIDERS = [
+        Mega::class,
+        GoogleDrive::class,
+    ];
+
     /**
      * @param string $link              link to check
      * @param bool $verifyCertificate   if false it will not verify the SSL certificate
@@ -19,7 +24,7 @@ class LinkChecker
         $link = trim($link);
         $status = Constants::STATUS_INVALID;
         /** @var CheckerInterface $host */
-        foreach ([Mega::class, GoogleDrive::class] as $host) {
+        foreach (self::HOSTING_PROVIDERS as $host) {
             if ($host::isValid($link)) {
                 $status = $host::isOnline(
                     $link,

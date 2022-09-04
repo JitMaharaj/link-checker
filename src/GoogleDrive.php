@@ -8,8 +8,8 @@ class GoogleDrive implements CheckerInterface
     const API_URL_FOLDER = 'https://drive.google.com/drive/folders/';
 
     const REGEX = [
-        'valid' => '/https:\/\/drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+((\/(view|edit)?)?(\?[a-zA-Z0-9=\-\_]*)?)?/',
-        'clean' => '/https:\/\/drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+/',
+        'valid' => '/https:\/\/(www\.)?drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+((\/(view|edit)?)?(\?[a-zA-Z0-9=\-\_]*)?)?/',
+        'clean' => '/https:\/\/(www\.)?drive\.google\.com\/(file\/d|drive\/folders)\/[a-zA-Z0-9\-\_]+/',
     ];
 
     public static function isOnline(
@@ -37,7 +37,7 @@ class GoogleDrive implements CheckerInterface
                 if (!$result) {
                     throw new \Exception('Connection failed');
                 }
-                return $result[2] === 200;
+                return $result['statusCode'] === 200;
             case Constants::TYPE_FILE:
                 $url = self::API_URL_FILE . $id;
                 $result = HTTPClient::request(
@@ -51,7 +51,7 @@ class GoogleDrive implements CheckerInterface
                     throw new \Exception('Connection failed');
                 }
 
-                switch ($result[2]) {
+                switch ($result['statusCode']) {
                     case 404:
                         return false;
                     case 303: // redirect to download => the file is online
@@ -60,18 +60,18 @@ class GoogleDrive implements CheckerInterface
                         return
                             // the file exists and the header contains the location
                             // of the file
-                            isset($result[1]['location']) ||
+                            isset($result['headers']['location']) ||
                             // the file exists but Google Drive can't scan this file
                             // for viruses
-                            (isset($result[1]['cross-origin-opener-policy']) &&
+                            (isset($result['headers']['cross-origin-opener-policy']) &&
                                 str_contains(
-                                    $result[1]['cross-origin-opener-policy'][0],
+                                    $result['headers']['cross-origin-opener-policy'][0],
                                     'DriveUntrustedContentHttp'
                                 )
                             ) ||
-                            (isset($result[1]['content-security-policy']) &&
+                            (isset($result['headers']['content-security-policy']) &&
                                 str_contains(
-                                    $result[1]['content-security-policy'][0],
+                                    $result['headers']['content-security-policy'][0],
                                     'DriveUntrustedContentHttp'
                                 )
                             );

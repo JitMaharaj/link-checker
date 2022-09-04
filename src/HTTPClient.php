@@ -50,7 +50,6 @@ class HTTPClient
             "Content-Type: application/json",
             "Accept: */*",
             "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-            "Accept-Encoding: gzip, deflate, br",
             "Connection: keep-alive",
         ];
 
@@ -93,10 +92,14 @@ class HTTPClient
         );
 
         $responseHeaders = [];
-        $response_data = curl_exec($ch);
+        $responseData = curl_exec($ch);
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        return [$response_data, $responseHeaders, $statusCode];
+        return [
+            'result' => $responseData,
+            'headers' => $responseHeaders,
+            'statusCode' => $statusCode
+        ];
     }
 }

@@ -8,14 +8,14 @@ class Mega implements CheckerInterface
 
     const REGEX = [
         'old' => [
-            'valid' => '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]*)?/',
-            'with_key' => '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]+)/',
-            'without_key' => '/https:\/\/mega\.nz\/#F?![a-zA-Z0-9]{8}!?/'
+            'valid' => '/https:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]*)?/',
+            'with_key' => '/https:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}(![a-zA-Z0-9_-]+)/',
+            'without_key' => '/https:\/\/(www\.)?mega\.nz\/#F?![a-zA-Z0-9]{8}!?/'
         ],
         'new' => [
-            'valid' => '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]*)?/',
-            'with_key' => '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]+)/',
-            'without_key' => '/https:\/\/mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}#?/'
+            'valid' => '/https:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]*)?/',
+            'with_key' => '/https:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}(#[a-zA-Z0-9_-]+)/',
+            'without_key' => '/https:\/\/(www\.)?mega\.nz\/(file|folder)\/[a-zA-Z0-9]{8}#?/'
         ]
     ];
 
@@ -59,7 +59,7 @@ class Mega implements CheckerInterface
             $payload,
             $verifyCertificate,
             $verbose
-        )[0];
+        )['result'];
         if (!$result) {
             throw new \Exception('Connection failed');
         }
