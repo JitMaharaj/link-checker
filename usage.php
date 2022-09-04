@@ -1,10 +1,10 @@
 <?php
 
-use LinkChecker\GoogleDrive;
 
 require "./vendor/autoload.php";
 
 use LinkChecker\LinkChecker;
+use LinkChecker\GoogleDrive;
 use LinkChecker\Mega;
 
 $link = 'https://mega.nz/file/xxxxxxxx#zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz';

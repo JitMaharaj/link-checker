@@ -49,7 +49,24 @@ class GoogleDrive implements CheckerInterface
                 if (!$result) {
                     throw new \Exception('Connection failed');
                 }
-                return isset($result[1]['location']);
+                return
+                    // the file exists and the header contains the location
+                    // of the file
+                    isset($result[1]['location']) ||
+                    // the file exists but Google Drive can't scan this file
+                    // for viruses
+                    (isset($result[1]['cross-origin-opener-policy']) &&
+                        str_contains(
+                            $result[1]['cross-origin-opener-policy'][0],
+                            'DriveUntrustedContentHttp'
+                        )
+                    ) ||
+                    (isset($result[1]['content-security-policy']) &&
+                        str_contains(
+                            $result[1]['content-security-policy'][0],
+                            'DriveUntrustedContentHttp'
+                        )
+                    );
             default:
                 throw new \InvalidArgumentException("Invalid type $type");
         }
